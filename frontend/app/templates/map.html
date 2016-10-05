@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+			var debug = 0;
+      var queryname = "{{queryname}}";
+      var param = "{{param}}";
+ 			if (debug) {
+				alert(queryname + " " + param);
+      }
+			var markers = [];
+      var map;
+			var lat, lng;
+      function initMap() {
+				if (debug) {
+					alert("Method initMap");
+				}
+        map = new google.maps.Map(
+					document.getElementById('map'), {
+        		center: {lat: 37.4291, lng: -121.9277},
+          	zoom: 15 });
+
+				map.data.loadGeoJson('/static/service.json');
+
+        if (queryname == "fuel"){
+					var res = param.split(",");
+					lat = res[0];
+					lng = res[1];
+					makeFuelQuery();
+          if (debug) {
+          	alert("Calling fuelquery");
+					}
+				} else {
+					makeDBQuery();
+			 		window.setInterval(makeDBQuery, 3*1000);
+				}
+      }
+
+      function makeDBQuery()
+      {
+				if (debug) {
+					alert("Method makeDBQuery");
+				}
+     		$.ajax({
+        	type: 'GET',
+          url:'/trucks/'+param,
+        	data: { get_param: 'value' },
+					success: function (data) {
+						if (debug) {
+							alert(data);
+						}
+						var obj = JSON.parse(data)
+						if (obj.length > 0) {
+            	for (var i in obj) {
+								var lat = obj[i][3];
+								var lon = obj[i][2];
+								var deviceName = obj[i][1];
+								var myLatlng = new google.maps.LatLng(lat, lon);
+								if (debug) {
+									alert("lat = " + lat + " lon = " + " " + myLatlng);
+								}
+								// center to the first truck.
+								if (i == 0) {
+									map.panTo(myLatlng);
+								}
+								var marker = new google.maps.Marker({
+										position: myLatlng,
+										title: deviceName
+								});
+
+								// To add the marker to the map, call setMap();
+								marker.setMap(map);
+							}
+						}
+					},
+					error: function(exception){
+						alert('Exception:'+exception);
+					}
+      	});
+      }
+
+			function makeFuelQuery()
+      {
+        if (debug) {
+          alert("Method makeFuelQuery");
+        }
+        $.ajax({
+          type: 'GET',
+  				//url: '/fuel/'+queryname,
+         	url:'/fuel/'+lat+'/'+lng,
+          data: { get_param: 'value' },
+          success: function (data) {
+            if (debug) {
+              alert(data);
+            }
+            var fuelLatlng = new google.maps.LatLng(lng, lat);
+    		    if (debug) {
+							alert("lat = " + lat + " lng = " + lng + " " + fuelLatlng);
+            }
+            map.panTo(fuelLatlng);
+            var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+						var fuelmarker = new google.maps.Marker({
+                    position: fuelLatlng,
+                    title: "fuelRequest"
+                });
+            fuelmarker.setMap(map);
+            var obj = JSON.parse(data)
+            if (obj.length > 0) {
+              for (var i in obj) {
+                var trucklat = obj[i][3];
+                var trucklon = obj[i][2];
+                var deviceName = obj[i][1];
+                var myLatlng = new google.maps.LatLng(trucklat, trucklon);
+                if (debug) {
+                  alert("lat = " + lat + " lon = " + " " + myLatlng);
+                }
+                var marker = new google.maps.Marker({
+                    position: myLatlng,
+                    icon: image,
+                    title: deviceName
+                });
+
+                // To add the marker to the map, call setMap();
+                marker.setMap(map);
+              }
+            }
+          },
+          error: function(exception){
+            alert('Exception:'+exception);
+          }
+        });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBABEXFD6iLtcGUsURAFgxVplv7Sn5x5OU&callback=initMap"
+    async defer></script>
+  </body>
+</html>

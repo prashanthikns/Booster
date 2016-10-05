@@ -33,7 +33,11 @@ public class DBConnect {
         } catch(SQLException e) {
             System.out.println("DeviceDataTable Insert Failed: " + sql);
         	System.err.println("Error Code: " + e.getErrorCode());
-            System.err.println("Message: " + e.getMessage());	           
+            System.err.println("Message: " + e.getMessage());	
+            if (con == null) {
+            	System.out.println("Reconnecting");
+            	connect();
+            }
        }
        return;
     }
@@ -48,7 +52,11 @@ public class DBConnect {
         } catch(SQLException e) {
         	System.out.println("Calling update in deviceTimeTable failed: " + updateTimeRecord.insertTimeSql);
         	System.err.println("Error Code: " + e.getErrorCode());
-            System.err.println("Message: " + e.getMessage());	                  	
+            System.err.println("Message: " + e.getMessage());	
+            if (con == null) {
+            	System.out.println("Reconnecting");
+            	connect();
+            }
         }
     	
         if (updateRowCount == 0) {
@@ -61,9 +69,14 @@ public class DBConnect {
         	} catch(SQLException e) {
         		System.out.println("Calling insert in deviceTimeTable failed: " + updateTimeRecord.insertTimeSql);
         		System.err.println("Error Code: " + e.getErrorCode());
-                System.err.println("Message: " + e.getMessage());	           
+                System.err.println("Message: " + e.getMessage());	
+                if (con == null) {
+                	System.out.println("Reconnecting");
+                	connect();
+                }
         	}
         }
+        return;
     }
     
     public void insertFuelDB(String fuelSql) throws SQLException{
@@ -75,7 +88,11 @@ public class DBConnect {
         } catch(SQLException e) {
             System.out.println("fuelTable Insert Failed: " + fuelSql);
         	System.err.println("Error Code: " + e.getErrorCode());
-            System.err.println("Message: " + e.getMessage());	           
+            System.err.println("Message: " + e.getMessage());	
+            if (con == null) {
+            	System.out.println("Reconnecting");
+            	connect();
+            }
        }
        return;
     }

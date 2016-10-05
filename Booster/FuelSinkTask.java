@@ -66,12 +66,12 @@ public class FuelSinkTask extends SinkTask {
 				    	
 			System.out.printf("fuel id: %s  lat: %f lon: %f\n", fuelId, lat, lon);	
 			        
-			String fuelSql = "INSERT INTO fuelTable (fuelId, latitude, longitude, geom) "
+			String fuelSql = "INSERT INTO fuelTable (fuelId, lat, lon, geom) "
 			        		 + "VALUES (" 
 			        		 + "'" + fuelId + "'" + ","
 			        		 +  lat + "," 
 			        		 +  lon + ","
-			        		 +  "'POINT("+ lat + " " + lon + ");'";
+			        		 +  "'POINT("+ lat + " " + lon + ")'" + ");";
 			        
 			System.out.println(fuelSql);
 			fuelList.add(fuelSql);

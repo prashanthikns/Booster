@@ -31,7 +31,7 @@ public class DeviceDataProducer {
 		 
 		 Producer<String, String> producer = new KafkaProducer<String, String>(props);
 		 System.out.println("Sending to deviceSample topic");
-	     producer.send(new ProducerRecord<String, String>("newsample", key, value));
+	     producer.send(new ProducerRecord<String, String>("sample", key, value));
 	     System.out.println("Done topic");
 		 producer.close(); 	  
 	}

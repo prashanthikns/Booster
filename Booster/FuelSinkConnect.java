@@ -44,7 +44,7 @@ public class FuelSinkConnect extends SinkConnector {
 	//Returns class of task
 	@Override
 	public Class<? extends Task> taskClass() {
-		return DeviceDataSinkTask.class;
+		return FuelSinkTask.class;
 	}
  
 	/**
